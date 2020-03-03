@@ -1,0 +1,47 @@
+#!/bin/bash
+
+pkgver=5.2.1
+mkdir -p "$1" "$2" "$3"
+build=$(cd "$1/" && pwd)
+cache=$(cd "$2/" && pwd)
+env_dir=$(cd "$3/" && pwd)
+
+BIN_DIR=$(cd $(dirname $0); pwd)
+BUILDPACK_DIR=$(dirname $BIN_DIR)
+
+indent() {
+  case $(uname -s) in
+    Darwin*) sed 's/^/       /';;
+    *) sed -u 's/^/       /';;
+  esac
+}
+
+echo "-----> Downloading pacman"
+if [ ! -s $cache/pacman-$pkgver.tar.gz ]; then
+    cd $cache
+    curl -Lso pacman-$pkgver.tar.gz \
+        "https://sources.archlinux.org/other/pacman/pacman-$pkgver.tar.gz" \
+        | indent
+fi
+
+
+echo "-----> Unarchiving pacman"
+if [ ! -s $cache/pacman-$pkgver ]; then
+  cd $cache
+  mkdir -p pacman-$pkgver
+  tar -xf pacman-$pkgver.tar.gz
+fi
+
+# echo "-----> Building pacman"
+# if [ ! -s "$cache/pacman-$pkgver/src/.libs/libgeos.a" ]; then
+  cd $cache/pacman-$pkgver
+  ./configure --prefix=$build | indent
+  make | indent
+# fi
+
+# echo "-----> Installing GEOS"
+# if [ ! -s "$build/lib/libgeos.a" ]; then
+#   cd $cache/geos-$pkgver
+  make install | indent
+#   echo "--with-opt-dir=$build --with-geos-dir=$build --with-proj-dir=$build" >> $env_dir/BUNDLE_BUILD__RGEO
+# fi
