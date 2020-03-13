@@ -19,6 +19,8 @@ LIBRARY_PATH=$build/vendor/lib:$LIBRARY_PATH
 INCLUDE_PATH=$build/vendor/lib:$INCLUDE_PATH
 CPATH=$INCLUDE_PATH
 CPPPATH=$INCLUDE_PATH
+PREFIX=$build/vendor
+# CFLAGS="$(pkg-config --cflags libarchive) $(pkg-config --libs-only-L libarchive) $CFLAGS "
 
 case $(uname -s) in
     Darwin*) PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH";;
