@@ -1,47 +1,46 @@
 #!/bin/bash
 
-pkgver=5.2.1
+set -e
+
 mkdir -p "$1" "$2" "$3"
 build=$(cd "$1/" && pwd)
 cache=$(cd "$2/" && pwd)
 env_dir=$(cd "$3/" && pwd)
 
-BIN_DIR=$(cd $(dirname $0); pwd)
-BUILDPACK_DIR=$(dirname $BIN_DIR)
+export BIN_DIR=$(cd $(dirname $0); pwd)
+export BUILDPACK_DIR=$(dirname $BIN_DIR)
+export BUILDPACK_VENDOR_DIR=$build
 
-indent() {
-  case $(uname -s) in
-    Darwin*) sed 's/^/       /';;
-    *) sed -u 's/^/       /';;
-  esac
-}
+PATH=$PATH:$build/vendor/bin
+PKG_CONFIG_PATH=$build/vendor/lib/pkgconfig
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$build/vendor/lib
+LD_RUN_PATH=$LD_RUN_PATH:$build/vendor/lib
+LIBRARY_PATH=$LIBRARY_PATH:$build/vendor/lib
+INCLUDE_PATH=$INCLUDE_PATH:$build/vendor/lib
+CPATH=$INCLUDE_PATH
+CPPPATH=$INCLUDE_PATH
 
-echo "-----> Downloading pacman"
-if [ ! -s $cache/pacman-$pkgver.tar.gz ]; then
-    cd $cache
-    curl -Lso pacman-$pkgver.tar.gz \
-        "https://sources.archlinux.org/other/pacman/pacman-$pkgver.tar.gz" \
-        | indent
-fi
+case $(uname -s) in
+    Darwin*) PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH";;
+esac
 
+packages=(libarchive pacman)
+for package in ${packages[*]}
+do
+  mkdir -p $build/vendor $cache/$package
+  (
+      srcdir=$cache/$package
+      pkgdir=$build/vendor
 
-echo "-----> Unarchiving pacman"
-if [ ! -s $cache/pacman-$pkgver ]; then
-  cd $cache
-  mkdir -p pacman-$pkgver
-  tar -xf pacman-$pkgver.tar.gz
-fi
+      cd $srcdir
 
-# echo "-----> Building pacman"
-# if [ ! -s "$cache/pacman-$pkgver/src/.libs/libgeos.a" ]; then
-  cd $cache/pacman-$pkgver
-  ./configure --prefix=$build | indent
-  make | indent
-# fi
+      source "$BIN_DIR/packages/$package.sh" $pkgdir $srcdir $env_dir
 
-# echo "-----> Installing GEOS"
-# if [ ! -s "$build/lib/libgeos.a" ]; then
-#   cd $cache/geos-$pkgver
-  make install | indent
-#   echo "--with-opt-dir=$build --with-geos-dir=$build --with-proj-dir=$build" >> $env_dir/BUNDLE_BUILD__RGEO
-# fi
+      (type prepare &> /dev/null && prepare)
+      (build)
+      (package)
+  )
+done
+
+pacman-key --init
+pacman-key --populate archlinux
