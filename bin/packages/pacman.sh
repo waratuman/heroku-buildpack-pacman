@@ -229,7 +229,7 @@ prepare() {
 build() {
   cd "$pkgname-$pkgver"
 
-    ./configure --help
+    # ./configure --help
   ./configure --prefix=$pkgdir \
     --sysconfdir=$pkgdir/etc \
     --localstatedir=$pkgdir/var \

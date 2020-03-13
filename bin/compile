@@ -20,6 +20,8 @@ INCLUDE_PATH=$build/vendor/lib:$INCLUDE_PATH
 CPATH=$INCLUDE_PATH
 CPPPATH=$INCLUDE_PATH
 PREFIX=$build/vendor
+PKG_CONFIG_PATH=$build/vendor
+PKG_CONFIG_LIBDIR=$build/vendor/lib
 # CFLAGS="$(pkg-config --cflags libarchive) $(pkg-config --libs-only-L libarchive) $CFLAGS "
 
 case $(uname -s) in
