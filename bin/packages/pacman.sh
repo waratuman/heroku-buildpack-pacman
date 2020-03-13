@@ -233,7 +233,7 @@ build() {
     --sysconfdir=$pkgdir/etc \
     --localstatedir=$pkgdir/var \
     --enable-doc \
-    --with-scriptlet-shell=$pkgdir/usr/bin/bash \
+    --with-scriptlet-shell=/usr/bin/bash \
     --with-ldconfig=$pkgdir/usr/bin/ldconfig
   make V=1
 }

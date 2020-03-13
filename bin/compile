@@ -11,12 +11,12 @@ export BIN_DIR=$(cd $(dirname $0); pwd)
 export BUILDPACK_DIR=$(dirname $BIN_DIR)
 export BUILDPACK_VENDOR_DIR=$build
 
-PATH=$PATH:$build/vendor/bin
+PATH=$build/vendor/bin:$PATH
 PKG_CONFIG_PATH=$build/vendor/lib/pkgconfig
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$build/vendor/lib
-LD_RUN_PATH=$LD_RUN_PATH:$build/vendor/lib
-LIBRARY_PATH=$LIBRARY_PATH:$build/vendor/lib
-INCLUDE_PATH=$INCLUDE_PATH:$build/vendor/lib
+LD_LIBRARY_PATH=$build/vendor/lib:$LD_LIBRARY_PATH
+LD_RUN_PATH=$build/vendor/lib:$LD_RUN_PATH
+LIBRARY_PATH=$build/vendor/lib:$LIBRARY_PATH
+INCLUDE_PATH=$build/vendor/lib:$INCLUDE_PATH
 CPATH=$INCLUDE_PATH
 CPPPATH=$INCLUDE_PATH
 
