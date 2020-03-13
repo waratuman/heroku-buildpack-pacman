@@ -229,12 +229,12 @@ prepare() {
 build() {
   cd "$pkgname-$pkgver"
 
-  ./configure --prefix=$1 \
-    --sysconfdir=$1/etc \
-    --localstatedir=$1/var \
+  ./configure --prefix=$pkgdir \
+    --sysconfdir=$pkgdir/etc \
+    --localstatedir=$pkgdir/var \
     --enable-doc \
-    --with-scriptlet-shell=$1/usr/bin/bash \
-    --with-ldconfig=$1/usr/bin/ldconfig
+    --with-scriptlet-shell=$pkgdir/usr/bin/bash \
+    --with-ldconfig=$pkgdir/usr/bin/ldconfig
   make V=1
 }
 
